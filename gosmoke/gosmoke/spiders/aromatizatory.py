@@ -7,6 +7,9 @@ class AromatizatorySpider(scrapy.Spider):
     start_urls = ["https://gosmoke.ru/aromatizatory"]
 
     def parse(self, response):
+        if(response.url == "https://gosmoke.ru/"):
+            return
+
         sectionList = response.css('.list-categories a::attr(href)').extract()
 
         if sectionList:
@@ -14,7 +17,7 @@ class AromatizatorySpider(scrapy.Spider):
                 yield scrapy.Request(response.urljoin(url + "?limit=500"), callback=self.parse)
             return
 
-        productsList = response.xpath('//a[@itemprop="url"]/@href').extract()
+        productsList = response.xpath('//div[@id="content"]//a[@itemprop="url"]/@href').extract()
 
         if productsList:
             for url in productsList:
